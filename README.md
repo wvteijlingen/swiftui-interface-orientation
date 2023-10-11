@@ -5,10 +5,8 @@ that are supported by your SwiftUI views.
 
 ## Usage
 
-Attach the `.interfaceOrientations` modifier to any SwiftUI view to indicate the interface orientations that are
-supported by that view.
-
-As long as the view is visible, rotation to the specified orientations will be allowed.
+Attach the `.interfaceOrientations` modifier to any SwiftUI view to specify the interface orientations that are
+supported by that view. As long as the view is visible, rotation to the specified orientations will be allowed.
 
 For example, the following view will be restricted to the `.portrait` orientation, unless the Toggle is switched on:
 
@@ -28,9 +26,9 @@ Create an application delegate using `@UIApplicationDelegateAdaptor`, and implem
 
 ```swift
 private class AppDelegate: NSObject, UIApplicationDelegate {
-  func application(_ application: UIApplication, supportedInterfaceOrientationsFor window: UIWindow?) -> UIInterfaceOrientationMask {
-    InterfaceOrientationCoordinator.shared.supportedOrientations
-  }
+    func application(_ application: UIApplication, supportedInterfaceOrientationsFor window: UIWindow?) -> UIInterfaceOrientationMask {
+        InterfaceOrientationCoordinator.shared.supportedOrientations
+    }
 }
 ```
 
@@ -39,13 +37,13 @@ private class AppDelegate: NSObject, UIApplicationDelegate {
 If orientations are specified by multiple views, the resolved set of allowed orientations is defined by the intersection
 of all specified orientations.
 
-For example, given the following code, the only allowed orientation would be `.portrait`, because that is
+For example, given the following code, the only allowed orientation is `.portrait`, because that is
 the only orientation that is specified by all views:
 
 ```swift
 VStack {
-  A().interfaceOrientations([.portrait, .landscape])
-  B().interfaceOrientations([.portrait, .portraitUpsideDown])
+    A().interfaceOrientations([.portrait, .landscape])
+    B().interfaceOrientations([.portrait, .portraitUpsideDown])
 }
 ```
 

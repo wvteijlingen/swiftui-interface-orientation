@@ -6,21 +6,17 @@ extension View {
     /// > This modifier requires correct set up of the ``InterfaceOrientationCoordinator``. See documentation for
     /// ``InterfaceOrientationCoordinator``
     ///
-    /// ## Orientations in Info.plist
-    /// The orientations specified in the Info.plist are the default supported orientations for the application.
-    /// However, if a view specifies an orientation that is not present in the Info.plist, it will still be supported.
-    ///
     /// ## Multiple orientations
     /// If orientations are specified by multiple views in the visible view hierarchy,
-    /// the final supported orientations are defined by the intersection all specified orientations.
+    /// the resolved set of allowed orientations is defined by the intersection of all specified orientations.
     ///
-    /// For example, given the following code, the only supported orientation would be 'portrait', because that is
-    /// the only orientation that is supported by all views:
+    /// For example, given the following code, the only allowed orientation is 'portrait', because that is
+    /// the only orientation that is specified by all views:
     ///
     /// ```swift
     /// VStack {
-    ///   A().interfaceOrientations([.portrait, .landscape])
-    ///   B().interfaceOrientations([.portrait, .portraitUpsideDown])
+    ///     A().interfaceOrientations([.portrait, .landscape])
+    ///     B().interfaceOrientations([.portrait, .portraitUpsideDown])
     /// }
     /// ```
     public func interfaceOrientations(_ orientations: UIInterfaceOrientationMask) -> some View {
