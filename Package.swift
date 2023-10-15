@@ -20,7 +20,7 @@ let package = Package(
         .target(
             name: "InterfaceOrientation"),
         .testTarget(
-            name: "InterfaceOrientation",
+            name: "InterfaceOrientationTests",
             dependencies: ["InterfaceOrientation"]),
     ]
 )
