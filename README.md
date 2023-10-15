@@ -36,11 +36,11 @@ private class AppDelegate: NSObject, UIApplicationDelegate {
 
 ## Multiple views
 
-If orientations are specified by multiple views, the resolved set of allowed orientations is defined by the intersection
-of all specified orientations.
+If orientations are specified by multiple views, the supported orientations for the app are defined by the lowest
+common denominator (i.e. the intersection of all specified orientations).
 
-For example, given the following code, the only allowed orientation is `.portrait`, because that is
-the only orientation that is specified by all views:
+For example, given the following code, the only allowed orientation is `.portrait` because that is
+the only orientation which is supported by all views:
 
 ```swift
 VStack {
