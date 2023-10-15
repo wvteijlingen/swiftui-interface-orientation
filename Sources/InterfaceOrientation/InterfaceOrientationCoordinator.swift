@@ -24,7 +24,7 @@ private let logger = Logger()
 ///    ```
 public class InterfaceOrientationCoordinator: ObservableObject {
     public static let shared = InterfaceOrientationCoordinator()
-    
+
     /// The default orientations when no view specifies custom orientations.
     ///
     /// The value of `defaultOrientations` will be loaded from the Info.plist. If the Info.plist cannot be read,
@@ -60,7 +60,7 @@ public class InterfaceOrientationCoordinator: ObservableObject {
             return resolved
         }
     }
-    
+
     /// The current orientation of the interface.
     ///
     /// This is dependent on the current device orientation and the orientations supported by the SwiftUI
@@ -70,7 +70,20 @@ public class InterfaceOrientationCoordinator: ObservableObject {
     private var orientations: [UUID: UIInterfaceOrientationMask] = [:]
     private var cancellables = Set<AnyCancellable>()
 
-    private init() {
+    init(defaultOrientations: UIInterfaceOrientationMask, allowOverridingDefaultOrientations: Bool = true) {
+        self.defaultOrientations = defaultOrientations
+        self.allowOverridingDefaultOrientations = allowOverridingDefaultOrientations
+
+        NotificationCenter.default.publisher(for: UIDevice.orientationDidChangeNotification)
+            .sink { _ in
+                self.resolveOrientations()
+            }
+            .store(in: &cancellables)
+
+        resolveOrientations()
+    }
+
+    convenience init(allowOverridingDefaultOrientations: Bool = true) {
         let orientationsFromInfoPlist = Bundle.main.infoDictionary?["UISupportedInterfaceOrientations"] as? [String] ?? []
 
         let defaultOrientations: UIInterfaceOrientationMask = orientationsFromInfoPlist.reduce([]) { partialResult, orientation in
@@ -91,21 +104,21 @@ public class InterfaceOrientationCoordinator: ObservableObject {
 
         if defaultOrientations.isEmpty {
             logger.warning("Default orientations could not be loaded from Info.plist, defaulting to '.all'")
-            self.defaultOrientations = .all
+            self.init(
+                defaultOrientations: .all,
+                allowOverridingDefaultOrientations: allowOverridingDefaultOrientations
+            )
         } else {
-            self.defaultOrientations = defaultOrientations
+            self.init(
+                defaultOrientations: defaultOrientations,
+                allowOverridingDefaultOrientations: allowOverridingDefaultOrientations
+            )
         }
-
-        NotificationCenter.default.publisher(for: UIDevice.orientationDidChangeNotification)
-            .sink { _ in
-                self.resolveOrientations()
-            }
-            .store(in: &cancellables)
-        
-        resolveOrientations()
     }
 
     func register(orientations: UIInterfaceOrientationMask, id: UUID) {
+        assert(!orientations.isEmpty, "Using an empty orientation mask is not allowed")
+
         self.orientations[id] = orientations
         resolveOrientations()
     }

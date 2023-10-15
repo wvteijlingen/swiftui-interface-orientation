@@ -2,39 +2,17 @@ import XCTest
 import UIKit
 @testable import InterfaceOrientation
 
-class InterfaceOrientationCoordinatorTests_base: XCTestCase {
-    let coordinator = InterfaceOrientationCoordinator.shared
-    var overrideIDs: [UUID] = []
+final class InterfaceOrientationCoordinatorTests_whenNoOverridesAllowed: XCTestCase {
+    var coordinator: InterfaceOrientationCoordinator!
 
     override func setUp() async throws {
         try await super.setUp()
-        coordinator.defaultOrientations = .all
-        coordinator.allowOverridingDefaultOrientations = false
-        overrideIDs = []
-    }
 
-    override func tearDown() async throws {
-        try await super.tearDown()
-        for id in overrideIDs {
-            coordinator.unregister(orientationsWithID: id)
-        }
+        coordinator = InterfaceOrientationCoordinator(
+            defaultOrientations: .portrait,
+            allowOverridingDefaultOrientations: false
+        )
     }
-
-    var overrideID: UUID {
-        let id = UUID()
-        overrideIDs.append(id)
-        return id
-    }
-}
-
-final class InterfaceOrientationCoordinatorTests_whenNoOverridesAllowed: InterfaceOrientationCoordinatorTests_base {
-    override func setUp() async throws {
-        try await super.setUp()
-        coordinator.defaultOrientations = .portrait
-        coordinator.allowOverridingDefaultOrientations = false
-    }
-
-    // MARK: -
 
     func test_supportedOrientations_withNoViews_returnsDefault() throws {
         let actual = coordinator.supportedOrientations
@@ -44,7 +22,7 @@ final class InterfaceOrientationCoordinatorTests_whenNoOverridesAllowed: Interfa
     }
 
     func test_supportedOrientations_whenOneView_returnsResolved() throws {
-        coordinator.register(orientations: .landscapeLeft, id: overrideID)
+        coordinator.register(orientations: .landscapeLeft, id: UUID())
 
         let actual = coordinator.supportedOrientations
         let expected: UIInterfaceOrientationMask = [.portrait]
@@ -53,9 +31,9 @@ final class InterfaceOrientationCoordinatorTests_whenNoOverridesAllowed: Interfa
     }
 
     func test_supportedOrientations_whenMultipleViews_returnsIntersection() throws {
-        coordinator.register(orientations: .portrait, id: overrideID)
-        coordinator.register(orientations: [.portrait, .landscapeLeft], id: overrideID)
-        coordinator.register(orientations: [.portrait, .landscapeLeft, .landscapeRight], id: overrideID)
+        coordinator.register(orientations: .portrait, id: UUID())
+        coordinator.register(orientations: [.portrait, .landscapeLeft], id: UUID())
+        coordinator.register(orientations: [.portrait, .landscapeLeft, .landscapeRight], id: UUID())
 
         let actual = coordinator.supportedOrientations
         let expected: UIInterfaceOrientationMask = [.portrait]
@@ -64,9 +42,9 @@ final class InterfaceOrientationCoordinatorTests_whenNoOverridesAllowed: Interfa
     }
 
     func test_supportedOrientations_whenNoIntersection_returnsDefault() throws {
-        coordinator.register(orientations: .portrait, id: overrideID)
-        coordinator.register(orientations: [.landscapeLeft], id: overrideID)
-        coordinator.register(orientations: [.landscapeRight], id: overrideID)
+        coordinator.register(orientations: .portrait, id: UUID())
+        coordinator.register(orientations: [.landscapeLeft], id: UUID())
+        coordinator.register(orientations: [.landscapeRight], id: UUID())
 
         let actual = coordinator.supportedOrientations
         let expected: UIInterfaceOrientationMask = .portrait
@@ -75,11 +53,16 @@ final class InterfaceOrientationCoordinatorTests_whenNoOverridesAllowed: Interfa
     }
 }
 
-final class InterfaceOrientationCoordinatorTests_whenOverridesAllowed: InterfaceOrientationCoordinatorTests_base {
+final class InterfaceOrientationCoordinatorTests_whenOverridesAllowed: XCTestCase {
+    var coordinator: InterfaceOrientationCoordinator!
+
     override func setUp() async throws {
         try await super.setUp()
-        coordinator.defaultOrientations = .all
-        coordinator.allowOverridingDefaultOrientations = true
+
+        coordinator = InterfaceOrientationCoordinator(
+            defaultOrientations: .all,
+            allowOverridingDefaultOrientations: true
+        )
     }
 
     func test_supportedOrientations_withNoViews_returnsDefault() throws {
@@ -90,7 +73,7 @@ final class InterfaceOrientationCoordinatorTests_whenOverridesAllowed: Interface
     }
 
     func test_supportedOrientations_whenOneView_returnsResolved() throws {
-        coordinator.register(orientations: .landscapeLeft, id: overrideID)
+        coordinator.register(orientations: .landscapeLeft, id: UUID())
 
         let actual = coordinator.supportedOrientations
         let expected: UIInterfaceOrientationMask = [.landscapeLeft]
@@ -99,9 +82,9 @@ final class InterfaceOrientationCoordinatorTests_whenOverridesAllowed: Interface
     }
 
     func test_supportedOrientations_whenMultipleViews_returnsIntersection() throws {
-        coordinator.register(orientations: .portrait, id: overrideID)
-        coordinator.register(orientations: [.portrait, .landscapeLeft], id: overrideID)
-        coordinator.register(orientations: [.portrait, .landscapeLeft, .landscapeRight], id: overrideID)
+        coordinator.register(orientations: .portrait, id: UUID())
+        coordinator.register(orientations: [.portrait, .landscapeLeft], id: UUID())
+        coordinator.register(orientations: [.portrait, .landscapeLeft, .landscapeRight], id: UUID())
 
         let actual = coordinator.supportedOrientations
         let expected: UIInterfaceOrientationMask = [.portrait]
@@ -110,9 +93,9 @@ final class InterfaceOrientationCoordinatorTests_whenOverridesAllowed: Interface
     }
 
     func test_supportedOrientations_whenNoIntersection_returnsDefault() throws {
-        coordinator.register(orientations: .portrait, id: overrideID)
-        coordinator.register(orientations: [.landscapeLeft], id: overrideID)
-        coordinator.register(orientations: [.landscapeRight], id: overrideID)
+        coordinator.register(orientations: .portrait, id: UUID())
+        coordinator.register(orientations: [.landscapeLeft], id: UUID())
+        coordinator.register(orientations: [.landscapeRight], id: UUID())
 
         let actual = coordinator.supportedOrientations
         let expected: UIInterfaceOrientationMask = .all
