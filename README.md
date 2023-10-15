@@ -1,4 +1,4 @@
-# swift-interface-orientation
+# swiftui-interface-orientation
 
 The view modifier that Apple forgot. *SwiftInterfaceOrientation* allows you to easily specify the orientations
 that are supported by your SwiftUI views.
@@ -11,6 +11,8 @@ supported by that view. As long as the view is visible, rotation to the specifie
 For example, the following view will be restricted to the `.portrait` orientation, unless the Toggle is switched on:
 
 ```swift
+import InterfaceOrientation
+
 struct MyView: View {
     @State private var isLandscapeAllowed = false
 
@@ -58,5 +60,5 @@ When there are no views that specify custom orientations, a set of default orien
 
 Views are allowed to support orientations that are not present in the set of default orientations.
 
-This means that if a view supports `.landscape`, the interface will be allowed to rotate to landscape, even when
-`defaultOrientations` only specifies `.portrait`.
+This means that if a view supports `.landscapeLeft`, the interface can rotate to landscape, even when
+the default orientations don't include `.landscapeLeft`.
