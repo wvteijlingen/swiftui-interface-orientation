@@ -62,3 +62,11 @@ Views are allowed to support orientations that are not present in the set of def
 
 This means that if a view supports `.landscapeLeft`, the interface can rotate to landscape, even when
 the default orientations don't include `.landscapeLeft`.
+
+## iPad
+
+When running on iPad, *SwiftInterfaceOrientation* needs some extra configuration to work. You need to do one of the following:
+
+1. Set UIRequiresFullScreen to YES in the Info.plist
+2. Make sure that *not all* the orientations are selected in the Deployment Info for the project. For example, only select 'Portrait'.
+   You can still specify and support other orientations using the view modifier.
