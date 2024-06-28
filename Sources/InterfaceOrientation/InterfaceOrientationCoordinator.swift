@@ -74,12 +74,13 @@ public class InterfaceOrientationCoordinator: ObservableObject {
         self.defaultOrientations = defaultOrientations
         self.allowOverridingDefaultOrientations = allowOverridingDefaultOrientations
 
+        #if !os(visionOS)
         NotificationCenter.default.publisher(for: UIDevice.orientationDidChangeNotification)
             .sink { _ in
                 self.resolveOrientations()
             }
             .store(in: &cancellables)
-
+        #endif
         resolveOrientations()
     }
 
